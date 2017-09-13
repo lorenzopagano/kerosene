@@ -12,18 +12,12 @@ defmodule Kerosene.Paginator do
     page = paginator.page
     total_pages = paginator.total_pages
     params = build_params(paginator.params, opts[:params])
-  #  IO.puts("==========================================================")
     page
     |> previous_page
-    #|> IO.inspect(label: " previous_page ====================>>>>")
     |> first_page(page, opts[:window], opts[:first])
-    #|> IO.inspect(label: " first page ====================>>>>")
     |> page_list(page, total_pages, opts[:window], opts[:range])
-    #|> IO.inspect(label: " page list ====================>>>>")
     |> next_page(page, total_pages)
-    #|> IO.inspect(label: " next page ====================>>>>")
     |> last_page(page, total_pages, opts[:window], opts[:last])
-    #|> IO.inspect(label: " last_page ====================>>>>")
     |> Enum.map(fn {l, p} ->
      {l, p, build_url(conn, Map.put(params, "page", p)), page == p}
     end)
