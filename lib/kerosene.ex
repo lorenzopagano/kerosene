@@ -30,6 +30,7 @@ defmodule Kerosene do
     total_pages = get_total_pages(total_count, per_page)
     page = get_page(opts, total_pages)
     offset = get_offset(total_count, page)
+    params = opts[:params]    
 
     kerosene = %Kerosene {
       per_page: per_page,
@@ -37,7 +38,7 @@ defmodule Kerosene do
       total_pages: total_pages,
       total_count: total_count,
       max_page: max_page,
-      params: opts[:params]
+      params: params
     }
 
     {get_items(repo, query, per_page, offset), kerosene}

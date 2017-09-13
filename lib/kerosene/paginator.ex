@@ -1,7 +1,7 @@
 defmodule Kerosene.Paginator do
   use Phoenix.HTML
 
-  @default [window: 3, range: true, next_label: "Next", previous_label: "Previous", first: true, first_label: "First", last: true, last_label: "Last"]
+  @default [window: 3, range: true, first: true, last: true, current_class: "is-current"]
 
   @moduledoc """
   Helpers to render the pagination links and more.
@@ -12,33 +12,28 @@ defmodule Kerosene.Paginator do
     page = paginator.page
     total_pages = paginator.total_pages
     params = build_params(paginator.params, opts[:params])
-
+  #  IO.puts("==========================================================")
     page
     |> previous_page
+    #|> IO.inspect(label: " previous_page ====================>>>>")
     |> first_page(page, opts[:window], opts[:first])
+    #|> IO.inspect(label: " first page ====================>>>>")
     |> page_list(page, total_pages, opts[:window], opts[:range])
+    #|> IO.inspect(label: " page list ====================>>>>")
     |> next_page(page, total_pages)
+    #|> IO.inspect(label: " next page ====================>>>>")
     |> last_page(page, total_pages, opts[:window], opts[:last])
-    |> Enum.map(fn {l, p} -> 
-     {label_text(l, opts), p, build_url(conn, Map.put(params, "page", p)), page == p} 
+    #|> IO.inspect(label: " last_page ====================>>>>")
+    |> Enum.map(fn {l, p} ->
+     {l, p, build_url(conn, Map.put(params, "page", p)), page == p}
     end)
-  end
-
-  def label_text(label, opts) do
-    case label do
-      :first    -> opts[:first_label]
-      :previous -> opts[:previous_label]
-      :next     -> opts[:next_label]
-      :last     -> opts[:last_label]
-      _         -> label
-    end
   end
 
   @doc """
   Generates a page list based on current window
   """
   def page_list(list, page, total, window, true) when is_integer(window) and window >= 1 do
-    page_list = left(page, total, window)..right(page, total, window) 
+    page_list = left(page, total, window)..right(page, total, window)
     |> Enum.map(fn n -> {n, n} end)
 
     list ++ page_list
@@ -98,9 +93,7 @@ defmodule Kerosene.Paginator do
 
   def build_options(opts) do
     params = opts[:params] || %{}
-    theme  = opts[:theme]  || Application.get_env(:kerosene, :theme, :bootstrap)
-    opts   = Keyword.merge(opts, [params: params, theme: theme])
-
+    opts   = Keyword.merge(opts, [params: params])
     Keyword.merge(@default, opts)
   end
 end
